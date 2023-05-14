@@ -3,11 +3,15 @@ package org.stc.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.stc.controller.errors.NotFoundException;
 import org.stc.domain.File;
 import org.stc.domain.Item;
 import org.stc.domain.PermissionGroup;
 import org.stc.domain.enumerations.ItemType;
+import org.stc.domain.enumerations.PermissionLevel;
 import org.stc.repository.FileRepository;
+
+import java.util.Optional;
 
 @Service
 public class FileService {
@@ -26,7 +30,7 @@ public class FileService {
     public void createAssessmentsFile(String email, byte[] content) {
         Item backendFolder = itemService.findItemByNameAndType(ItemType.FOLDER, "backend");
         PermissionGroup permissionGroup = backendFolder.getPermissionGroup();
-        permissionService.validatePermission(permissionGroup, email);
+        permissionService.validatePermission(permissionGroup, email, PermissionLevel.EDIT);
 
         Item assessmentFile = itemService.create("assessment.pdf", ItemType.FILE,
                 permissionGroup, backendFolder);
@@ -34,5 +38,15 @@ public class FileService {
         file.setItem(assessmentFile);
         file.setBinary(content);
         fileRepository.save(file);
+    }
+
+    public byte[] getFilecontent(String email, String fileName) {
+        Item item = itemService.findItemByNameAndType(ItemType.FILE, fileName);
+        permissionService.validatePermission(item.getPermissionGroup(), email, PermissionLevel.VIEW);
+
+        Optional<File> optionalFile = fileRepository.findFileByItem(item);
+        File file = optionalFile.orElseThrow(() -> new NotFoundException("not found!"));
+
+        return file.getBinary();
     }
 }

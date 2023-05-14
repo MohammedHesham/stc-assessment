@@ -2,14 +2,10 @@ package org.stc.service;
 
 
 import org.springframework.stereotype.Service;
-import org.stc.controller.errors.ForbiddenException;
 import org.stc.domain.Item;
-import org.stc.domain.Permission;
 import org.stc.domain.PermissionGroup;
 import org.stc.domain.enumerations.ItemType;
 import org.stc.domain.enumerations.PermissionLevel;
-
-import java.util.List;
 
 @Service
 public class FolderService {
@@ -25,7 +21,7 @@ public class FolderService {
         Item stcSpace = itemService.findItemByNameAndType(ItemType.SPACE, "stc-assessments");
         PermissionGroup permissionGroup = stcSpace.getPermissionGroup();
 
-        permissionService.validatePermission(permissionGroup, email);
+        permissionService.validatePermission(permissionGroup, email, PermissionLevel.VIEW);
         Item backend = new Item();
         backend.setType(ItemType.FOLDER);
         itemService.create("backend", ItemType.FOLDER, permissionGroup, stcSpace);

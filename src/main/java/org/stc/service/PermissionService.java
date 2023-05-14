@@ -21,11 +21,11 @@ public class PermissionService {
     }
 
 
-    void validatePermission(PermissionGroup permissionGroup, String mail) {
+    void validatePermission(PermissionGroup permissionGroup, String mail, PermissionLevel permissionLevel) {
         List<Permission> permissions = permissionRepository.findAllByPermissionGroup(permissionGroup);
 
         permissions.stream().filter(permission -> permission.getUserEmail().equals(mail)
-                && permission.getPermissionLevel() == PermissionLevel.EDIT).findFirst().orElseThrow(() ->
+                && permission.getPermissionLevel() == permissionLevel).findFirst().orElseThrow(() ->
                 new ForbiddenException("User doesn't have access to this resource!"));
 
     }

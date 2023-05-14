@@ -28,9 +28,6 @@ public class Item {
     @JoinColumn(name = "parent_id")
     private Item parent;
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
-    private List<File> files = new ArrayList<>();
-
     public Long getId() {
         return id;
     }
@@ -63,13 +60,6 @@ public class Item {
         this.permissionGroup = permissionGroup;
     }
 
-    public List<File> getFiles() {
-        return files;
-    }
-
-    public void setFiles(List<File> files) {
-        this.files = files;
-    }
 
     @Override
     public String toString() {
